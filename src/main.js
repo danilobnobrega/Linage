@@ -6,6 +6,53 @@ import * as THREE from 'three'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// --- Dynamic Scanline Injection for Premium Card Sweep Materialization ---
+document.querySelectorAll('.feature-card, .result-card, .price-card').forEach(card => {
+  const scanline = document.createElement('div')
+  scanline.className = 'scanline'
+  card.appendChild(scanline)
+})
+
+// --- Signal-to-Noise Text Decoding (Kinetic Matrix Scramble) ---
+function scrambleText(element) {
+  const originalText = element.getAttribute('data-original-text') || element.innerText.trim()
+  if (!element.getAttribute('data-original-text')) {
+    element.setAttribute('data-original-text', originalText)
+  }
+  
+  const chars = "01▲▼$%&[]+-/\\*<>?@#$¥£€¢".split("")
+  const letters = originalText.split("")
+  let frame = 0
+  const totalFrames = 40 // ~1.2 seconds at 30ms interval
+  
+  const interval = setInterval(() => {
+    element.innerHTML = letters.map((char, index) => {
+      if (char === " " || char === "\n") return char
+      
+      const progress = frame / totalFrames
+      const charIndex = index / letters.length
+      
+      if (progress > charIndex) {
+        return char // Fully resolved character, pristine typography!
+      } else if (progress > charIndex - 0.22) {
+        // Active scrambling state - green neon highlighted financial ticker symbols!
+        const randomChar = chars[Math.floor(Math.random() * chars.length)]
+        return `<span style="color: var(--accent-color); font-weight: bold;">${randomChar}</span>`
+      } else {
+        // Distant noise, dim scrambled characters
+        const randomChar = chars[Math.floor(Math.random() * chars.length)]
+        return `<span style="opacity: 0.12; filter: blur(0.5px);">${randomChar}</span>`
+      }
+    }).join("")
+    
+    if (frame >= totalFrames) {
+      clearInterval(interval)
+      element.innerHTML = originalText // Fully restored pristine, semantic text!
+    }
+    frame++
+  }, 30)
+}
+
 // --- Lenis Smooth Scroll ---
 const lenis = new Lenis({
   duration: 1.2,
@@ -181,109 +228,94 @@ tlLoader.to('.loader-text .char', {
   duration: 1,
   ease: "power4.inOut"
 })
-.from('.hero-title', {
-  y: 50,
-  opacity: 0,
-  duration: 1,
-  ease: "power4.out"
-}, "-=0.2")
-.from('.hero-subtitle, .hero-cta', {
-  y: 30,
-  opacity: 0,
-  duration: 1,
-  stagger: 0.2,
-  ease: "power4.out"
-}, "-=0.8")
-
-
-// Scroll Animations
-gsap.utils.toArray('.section-title').forEach(title => {
-  gsap.from(title, {
-    scrollTrigger: {
-      trigger: title,
-      start: "top 85%",
-    },
-    y: 50,
-    opacity: 0,
-    duration: 1,
-    ease: "power3.out"
-  })
+.call(() => {
+  // Kinetic signal-to-noise materialization on Hero title!
+  const heroTitle = document.querySelector('.hero-title')
+  if (heroTitle) scrambleText(heroTitle)
 })
-
-gsap.from('.ps-card', {
-  scrollTrigger: {
-    trigger: '.problem-solution',
-    start: "top 75%",
-  },
-  y: 50,
-  opacity: 0,
-  duration: 1,
-  stagger: 0.2,
-  ease: "power3.out"
-})
-
-gsap.from('.persona-card', {
-  scrollTrigger: {
-    trigger: '.personas',
-    start: "top 75%",
-  },
+.from('.hero-cta', {
   y: 40,
   opacity: 0,
-  duration: 0.8,
-  stagger: 0.1,
-  ease: "power3.out"
+  duration: 1.2,
+  ease: "power4.out"
+}, "-=0.5")
+
+
+// Scroll-Linked Text Decoding Trigger
+document.querySelectorAll('[data-split-text]').forEach(el => {
+  if (el.classList.contains('hero-title')) return // already handled by loader
+  
+  ScrollTrigger.create({
+    trigger: el,
+    start: "top 85%",
+    onEnter: () => scrambleText(el),
+    once: true // trigger only once per load
+  })
 })
 
-gsap.from('.step-item', {
-  scrollTrigger: {
-    trigger: '.how-it-works',
-    start: "top 75%",
-  },
-  x: -50,
-  opacity: 0,
-  duration: 0.8,
-  stagger: 0.2,
-  ease: "power3.out"
-})
+// Holographic Scanline Card Sweeping (Elite Awwwards Materialization)
+const animateCardGroup = (gridSelector, cardSelector) => {
+  const cards = document.querySelectorAll(cardSelector)
+  if (cards.length === 0) return
+  
+  ScrollTrigger.create({
+    trigger: gridSelector,
+    start: "top 80%",
+    onEnter: () => {
+      cards.forEach((card, index) => {
+        const scanline = card.querySelector('.scanline')
+        
+        // Staggered reveal for cards
+        gsap.timeline({ delay: index * 0.2 })
+          // 1. Reveal scanline and start sweeping down
+          .fromTo(scanline, 
+            { top: "0%", opacity: 0 },
+            { top: "0%", opacity: 1, duration: 0.1 }
+          )
+          // 2. Animate clip-path to open up as scanline sweeps
+          .fromTo(card, 
+            { clipPath: "inset(0 0 100% 0)", opacity: 0 },
+            { clipPath: "inset(0 0 0% 0)", opacity: 1, duration: 1.5, ease: "power3.inOut" },
+            "<" // start simultaneously
+          )
+          // 3. Sweep scanline to 100% height and fade out at the bottom
+          .fromTo(scanline,
+            { top: "0%" },
+            { top: "100%", duration: 1.5, ease: "power3.inOut" },
+            "<"
+          )
+          .to(scanline, { opacity: 0, duration: 0.2 })
+      })
+    },
+    once: true
+  })
+}
 
-gsap.from('.tech-item', {
+animateCardGroup('.features-grid', '.feature-card')
+animateCardGroup('.results-grid', '.result-card')
+animateCardGroup('.pricing-grid', '.price-card')
+
+// Vision Paragraph (Non-split elements)
+gsap.from('.vision-body', {
   scrollTrigger: {
-    trigger: '.technical',
-    start: "top 75%",
+    trigger: '.vision',
+    start: "top 70%",
   },
   y: 30,
   opacity: 0,
-  duration: 0.8,
+  duration: 1.2,
+  ease: "power3.out"
+})
+
+// Footer Signature
+gsap.from('.signature > *', {
+  scrollTrigger: {
+    trigger: '.signature',
+    start: "top 90%",
+  },
+  y: 20,
+  opacity: 0,
+  duration: 1,
   stagger: 0.15,
   ease: "power3.out"
-})
-
-gsap.from('.price-card', {
-  scrollTrigger: {
-    trigger: '.pricing',
-    start: "top 75%",
-  },
-  y: 50,
-  opacity: 0,
-  duration: 0.8,
-  stagger: 0.2,
-  ease: "power3.out"
-})
-
-// Accordion Logic
-document.querySelectorAll('.accordion-header').forEach(header => {
-  header.addEventListener('click', () => {
-    const item = header.parentElement
-    const isActive = item.classList.contains('active')
-    
-    // Close all
-    document.querySelectorAll('.accordion-item').forEach(acc => {
-      acc.classList.remove('active')
-    })
-    
-    // Open clicked if it wasn't active
-    if (!isActive) {
-      item.classList.add('active')
-    }
-  })
 })

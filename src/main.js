@@ -19,15 +19,10 @@ const lenis = new Lenis({
   infinite: false,
 })
 
-function raf(time) {
-  lenis.raf(time)
-  requestAnimationFrame(raf)
-}
-requestAnimationFrame(raf)
-
 // Sync ScrollTrigger with Lenis
 lenis.on('scroll', ScrollTrigger.update)
 
+// Use GSAP's ticker to drive Lenis (more robust, avoids double loops)
 gsap.ticker.add((time) => {
   lenis.raf(time * 1000)
 })
@@ -84,16 +79,9 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 // Create a wireframe grid/terrain representing data/market
-const geometry = new THREE.PlaneGeometry(100, 100, 60, 60)
-const pos = geometry.attributes.position
-for (let i = 0; i < pos.count; i++) {
-  const x = pos.getX(i)
-  const y = pos.getY(i)
-  // Perlin noise-like simple displacement
-  const z = Math.sin(x * 0.2) * Math.cos(y * 0.2) * 1.5 + Math.sin(x * 0.05) * 2
-  pos.setZ(i, z)
-}
-geometry.computeVertexNormals()
+// We define the geometry without pre-displacing Z. All movement and displacement 
+// is done dynamically in the animation loop to ensure a 100% fluid, endless scrolling flow.
+const geometry = new THREE.PlaneGeometry(120, 120, 60, 60)
 
 const material = new THREE.MeshBasicMaterial({ 
   color: 0x00ff88, 
@@ -139,13 +127,30 @@ window.addEventListener('resize', () => {
 const clock = new THREE.Clock()
 function renderThree() {
   const elapsedTime = clock.getElapsedTime()
+  const currentScroll = lenis.scroll || 0
   
-  plane.position.z = (elapsedTime * 0.5) % 2 
+  // Continuously flow the wave offset based on time and scroll position.
+  // This creates an interactive flow: scrolling naturally speeds up the wave propagation.
+  const waveOffset = elapsedTime * 1.2 + currentScroll * 0.004
+  
+  // Update grid vertices dynamically for a perfectly fluid, infinite flowing wave.
+  // This completely eliminates modulo jumps, wrapping seams, or "video clip cuts".
+  const pos = geometry.attributes.position
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i)
+    const y = pos.getY(i)
+    
+    // Wave formula that moves along depth (y) and width (x) seamlessly and smoothly over time.
+    const z = Math.sin(x * 0.12 + waveOffset) * Math.cos(y * 0.12 + waveOffset) * 2.2 + Math.sin(x * 0.04) * 1.5
+    pos.setZ(i, z)
+  }
+  pos.needsUpdate = true
+  
   particlesMesh.rotation.y = elapsedTime * 0.02
   
-  // Camera scroll effect (tied to Lenis scroll)
-  camera.position.y = 2 - window.scrollY * 0.002
-  camera.position.z = 5 - window.scrollY * 0.001
+  // Camera scroll effect (tied to Lenis scroll instead of window.scrollY to prevent layout thrashing)
+  camera.position.y = 2 - currentScroll * 0.002
+  camera.position.z = 5 - currentScroll * 0.001
   
   renderer.render(scene, camera)
   requestAnimationFrame(renderThree)

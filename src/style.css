@@ -149,6 +149,52 @@ body {
   opacity: 0;
 }
 
+/* Cinematic Binary Ticker Decryption Text Reveal */
+[data-split-text] {
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* Word-by-Word Geometric Block Collapse (Muros Individuais Caindo) */
+[data-fade-text] {
+  opacity: 0;
+  will-change: opacity;
+}
+
+[data-fade-text].split-active {
+  opacity: 1;
+}
+
+.word-wrap {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: visible; /* Let blocks tumble out visually! */
+  padding: 1px 3px;  /* Spacing to frame the geometric blocks nicely */
+  margin: -1px 0;
+}
+
+.word-text {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  will-change: opacity;
+  display: inline-block;
+}
+
+.word-block {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transform-origin: bottom center;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
 /* Typography Helpers */
 strong {
   color: #fff;
@@ -249,6 +295,7 @@ strong {
   display: flex;
   flex-direction: column;
   gap: 3rem;
+  max-width: 950px;
 }
 
 .about-para {
@@ -402,28 +449,17 @@ strong {
   max-width: 900px;
 }
 
-.vision-tag {
-  display: inline-block;
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  color: var(--accent-color);
-  font-weight: 600;
-  margin-bottom: 2.5rem;
-}
-
-.vision-content h2 {
+.vision-subtitle {
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 5.5vw, 4.8rem);
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
   font-weight: 300;
   color: #fff;
   margin-bottom: 3.5rem;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
+  letter-spacing: -0.019em;
 }
 
-.vision-content h2 span {
+.vision-subtitle span {
   font-style: italic;
   font-weight: 400;
 }

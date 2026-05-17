@@ -13,17 +13,58 @@ document.querySelectorAll('.feature-card, .result-card, .price-card').forEach(ca
   card.appendChild(scanline)
 })
 
-// --- Signal-to-Noise Text Decoding (Kinetic Matrix Scramble) ---
-function scrambleText(element) {
+// --- Geometric Word-by-Word Block Injection ---
+document.querySelectorAll('[data-fade-text]').forEach(el => {
+  const words = el.innerText.trim().split(/\s+/)
+  
+  el.innerHTML = words.map(word => {
+    // Generate varied geometric clip-paths (muros de formas variadas!)
+    const geoTypes = [
+      "polygon(0 0, 100% 0, 100% 100%, 0 100%)",      // rectangle
+      "polygon(0 12%, 100% 0, 100% 100%, 0 88%)",      // skewed
+      "polygon(0 0, 100% 10%, 100% 90%, 0 100%)",      // asymmetric wedge
+      "polygon(0 8%, 100% 15%, 100% 100%, 0 92%)"      // slanted diagonal
+    ]
+    const randomClip = geoTypes[Math.floor(Math.random() * geoTypes.length)]
+    
+    // Vary colors of each geometric tile block to feel like physical pieces
+    const colors = [
+      "#1a1a1a", // slate dark
+      "#131313", // obsidian deep
+      "#202020", // basalt solid
+      "#282828"  // graphite medium
+    ]
+    const randomColor = colors[Math.floor(Math.random() * colors.length)]
+    
+    return `
+      <span class="word-wrap">
+        <span class="word-text">${word}</span>
+        <div class="word-block" style="background: ${randomColor}; clip-path: ${randomClip};"></div>
+      </span>
+    `
+  }).join(" ")
+  
+  el.classList.add('split-active')
+})
+
+// --- Signal-to-Noise Text Decoding (Elegant Typographic Cipher) ---
+function decryptText(element) {
+  if (element.classList.contains('decrypted')) return
+  element.classList.add('decrypted')
+  
   const originalText = element.getAttribute('data-original-text') || element.innerText.trim()
   if (!element.getAttribute('data-original-text')) {
     element.setAttribute('data-original-text', originalText)
   }
   
-  const chars = "01▲▼$%&[]+-/\\*<>?@#$¥£€¢".split("")
+  // Fade in the element container smoothly while scrambling
+  gsap.to(element, { opacity: 1, duration: 0.4, ease: "power2.out" })
+  
+  // High-end elegant editorial symbols and mathematical glyphs
+  const luxuryGlyphs = "†‡§¶øæœX*•°AΘΞΦΨΩ".split("")
   const letters = originalText.split("")
   let frame = 0
-  const totalFrames = 40 // ~1.2 seconds at 30ms interval
+  const totalFrames = 25 // Snappy and ultra-premium duration
   
   const interval = setInterval(() => {
     element.innerHTML = letters.map((char, index) => {
@@ -33,24 +74,23 @@ function scrambleText(element) {
       const charIndex = index / letters.length
       
       if (progress > charIndex) {
-        return char // Fully resolved character, pristine typography!
-      } else if (progress > charIndex - 0.22) {
-        // Active scrambling state - green neon highlighted financial ticker symbols!
-        const randomChar = chars[Math.floor(Math.random() * chars.length)]
-        return `<span style="color: var(--accent-color); font-weight: bold;">${randomChar}</span>`
+        return char // Fully resolved character in pristine editorial typography!
+      } else if (progress > charIndex - 0.2) {
+        // Active decrypting state - using elegant, luxury typographic symbols in medium-grey
+        const randomGlyph = luxuryGlyphs[Math.floor(Math.random() * luxuryGlyphs.length)]
+        return `<span style="color: #a0a0a0; font-weight: 300;">${randomGlyph}</span>`
       } else {
-        // Distant noise, dim scrambled characters
-        const randomChar = chars[Math.floor(Math.random() * chars.length)]
-        return `<span style="opacity: 0.12; filter: blur(0.5px);">${randomChar}</span>`
+        // Unrevealed state - completely invisible, keeping it ultra-clean and zero noise!
+        return `<span style="opacity: 0;">&nbsp;</span>`
       }
     }).join("")
     
     if (frame >= totalFrames) {
       clearInterval(interval)
-      element.innerHTML = originalText // Fully restored pristine, semantic text!
+      element.innerText = originalText // Fully restored pristine semantic text!
     }
     frame++
-  }, 30)
+  }, 35)
 }
 
 // --- Lenis Smooth Scroll ---
@@ -231,7 +271,7 @@ tlLoader.to('.loader-text .char', {
 .call(() => {
   // Kinetic signal-to-noise materialization on Hero title!
   const heroTitle = document.querySelector('.hero-title')
-  if (heroTitle) scrambleText(heroTitle)
+  if (heroTitle) decryptText(heroTitle)
 })
 .from('.hero-cta', {
   y: 40,
@@ -241,15 +281,48 @@ tlLoader.to('.loader-text .char', {
 }, "-=0.5")
 
 
-// Scroll-Linked Text Decoding Trigger
+// Scroll-Linked Text Decryption Trigger (Strategic Titles)
 document.querySelectorAll('[data-split-text]').forEach(el => {
   if (el.classList.contains('hero-title')) return // already handled by loader
   
   ScrollTrigger.create({
     trigger: el,
     start: "top 85%",
-    onEnter: () => scrambleText(el),
+    onEnter: () => decryptText(el),
     once: true // trigger only once per load
+  })
+})
+
+// Scroll-Linked Text Geometric Word-Block Reveal Trigger (Body Copy & Paragraphs)
+document.querySelectorAll('[data-fade-text]').forEach(el => {
+  const wordWraps = el.querySelectorAll('.word-wrap')
+  if (wordWraps.length === 0) return
+  
+  ScrollTrigger.create({
+    trigger: el,
+    start: "top 88%",
+    onEnter: () => {
+      wordWraps.forEach((wrap, index) => {
+        const text = wrap.querySelector('.word-text')
+        const block = wrap.querySelector('.word-block')
+        
+        // Rapid physics-based gravity collapse
+        gsap.timeline({ delay: index * 0.022 }) // Staggered domino cascade
+          .to(block, {
+            yPercent: 140,              // Falls down rapidly
+            rotation: "random(-35, 35)", // Rotates as it tumbles down
+            opacity: 0,                 // Fades away as it exits
+            duration: 0.6,
+            ease: "power2.in"           // Gravity-accelerated curve!
+          })
+          .to(text, {
+            opacity: 1,
+            duration: 0.35,
+            ease: "power1.out"
+          }, "-=0.45")                  // Fades in underlying text as block tumbles
+      })
+    },
+    once: true
   })
 })
 

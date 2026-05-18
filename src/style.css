@@ -649,7 +649,7 @@ strong {
   width: 100%;
   z-index: 1000;
   padding: 1.5rem 6%;
-  background: rgba(10, 10, 10, 0.82); /* Extremely rich solid dark glass initial state */
+  background: rgba(10, 10, 10, 0.92); /* Ultimate solid yet organic glassmorphic initial state */
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -664,7 +664,7 @@ strong {
 
 .navbar.scrolled {
   padding: 1.1rem 6%;
-  background: rgba(6, 6, 6, 0.96); /* Elegant solid obsidian scrolled overlay */
+  background: rgba(6, 6, 6, 0.97); /* Rich near-opaque obsidian scrolled overlay */
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 

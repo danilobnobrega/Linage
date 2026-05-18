@@ -122,17 +122,17 @@ lenis.on('scroll', (e) => {
     navbar.classList.remove('scrolled')
   }
   
-  // Ultra-responsive Autohide: disappears on any subtle scroll down, reappears on scroll up
+  // Ultra-responsive Autohide with physical recoil/backlash filter (1.5px threshold)
   const scrollDelta = currentScroll - lastScrollY
   
   if (currentScroll <= 0) {
     // Only force show at the absolute top (0 or negative pull)
     navbar.classList.remove('hidden')
-  } else if (scrollDelta > 0) {
-    // ALWAYS hide immediately on any scroll down (even inside Hero!)
+  } else if (scrollDelta > 1.5) {
+    // Hide immediately on deliberate scroll down (filtering out recoil jitters <= 1.5px)
     navbar.classList.add('hidden')
-  } else if (scrollDelta < 0) {
-    // Reappear immediately on scroll up
+  } else if (scrollDelta < -1.5) {
+    // Reveal immediately on deliberate scroll up
     navbar.classList.remove('hidden')
   }
   

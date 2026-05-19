@@ -228,14 +228,22 @@ strong {
   font-size: clamp(2.8rem, 6.5vw, 5.8rem);
   font-weight: 300;
   line-height: 1.15;
-  margin-bottom: 3.5rem;
+  margin-bottom: 6.5rem;
   color: #fff;
-  max-width: 1050px;
+  max-width: 100%;
   letter-spacing: -0.02em;
 }
 
 .hero-title p {
   margin: 0;
+}
+
+.hero-title p:first-child {
+  text-align: left;
+}
+
+.hero-title p:last-child {
+  text-align: center;
 }
 
 .hero-title span {

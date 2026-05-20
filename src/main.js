@@ -77,9 +77,11 @@ const lenis = new Lenis({
 // Sync ScrollTrigger and Navbar Toggle/Autohide with Lenis
 const navbar = document.querySelector('.navbar')
 let lastScrollY = 0
+let scrollVelocity = 0
 
 lenis.on('scroll', (e) => {
   ScrollTrigger.update()
+  scrollVelocity = Math.abs(e.velocity)
   
   const currentScroll = e.scroll
   
@@ -134,10 +136,14 @@ const cursor = document.querySelector('.cursor')
 const follower = document.querySelector('.cursor-follower')
 let mouseX = 0, mouseY = 0, followerX = 0, followerY = 0
 
+gsap.set([cursor, follower], { opacity: 0 })
+
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX
   mouseY = e.clientY
-  
+
+  gsap.set([cursor, follower], { opacity: 1 })
+
   gsap.to(cursor, {
     x: mouseX,
     y: mouseY,
@@ -326,40 +332,45 @@ document.querySelectorAll('[data-fade-text]').forEach(el => {
   )
 })
 
+// Maps current scroll velocity to a card reveal duration (fast scroll = shorter animation)
+const getCardDuration = () => {
+  const maxDuration = 1.5
+  const minDuration = 0.25
+  const velocityThreshold = 800
+  const t = Math.min(1, scrollVelocity / velocityThreshold)
+  return maxDuration - t * (maxDuration - minDuration)
+}
+
 // Holographic Scanline Card Sweeping (Elite Awwwards Materialization)
 const animateCardGroup = (gridSelector, cardSelector, columns = 2) => {
   const cards = document.querySelectorAll(cardSelector)
   if (cards.length === 0) return
-  
+
   cards.forEach((card, index) => {
     const scanline = card.querySelector('.scanline')
-    
+
     ScrollTrigger.create({
       trigger: card,
-      start: "top 85%", // Triggers when the top of the individual card reaches 85% of viewport
+      start: "top 85%",
       onEnter: () => {
-        // Calculate delay based on horizontal column index to preserve elegant staggered entry
-        // only for side-by-side elements entering the viewport at the same time on desktop.
         const activeCols = window.innerWidth > 768 ? columns : 1;
         const colIndex = index % activeCols;
-        const delay = colIndex * 0.15;
-        
+        const duration = getCardDuration()
+        const delay = colIndex * (0.15 * (duration / 1.5)) // scale stagger with duration
+
         gsap.timeline({ delay: delay })
-          // 1. Reveal scanline and start sweeping down
-          .fromTo(scanline, 
+          .fromTo(scanline,
             { top: "0%", opacity: 0 },
             { top: "0%", opacity: 1, duration: 0.1 }
           )
-          // 2. Animate clip-path to open up as scanline sweeps
-          .fromTo(card, 
+          .fromTo(card,
             { clipPath: "inset(0 0 100% 0)", opacity: 0 },
-            { clipPath: "inset(0 0 0% 0)", opacity: 1, duration: 1.5, ease: "power3.inOut" },
-            "<" // start simultaneously
+            { clipPath: "inset(0 0 0% 0)", opacity: 1, duration: duration, ease: "power3.inOut" },
+            "<"
           )
-          // 3. Sweep scanline to 100% height and fade out at the bottom
           .fromTo(scanline,
             { top: "0%" },
-            { top: "100%", duration: 1.5, ease: "power3.inOut" },
+            { top: "100%", duration: duration, ease: "power3.inOut" },
             "<"
           )
           .to(scanline, { opacity: 0, duration: 0.2 })

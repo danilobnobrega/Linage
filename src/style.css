@@ -783,4 +783,16 @@ strong {
   .nav-links {
     display: none;
   }
+
+  .nav-btn-comecar {
+    display: none;
+  }
+}
+
+/* Hide custom cursor on touch devices */
+@media (pointer: coarse) {
+  .cursor,
+  .cursor-follower {
+    display: none;
+  }
 }

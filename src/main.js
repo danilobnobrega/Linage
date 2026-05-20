@@ -136,21 +136,25 @@ const cursor = document.querySelector('.cursor')
 const follower = document.querySelector('.cursor-follower')
 let mouseX = 0, mouseY = 0, followerX = 0, followerY = 0
 
-gsap.set([cursor, follower], { opacity: 0 })
+const isTouch = window.matchMedia('(pointer: coarse)').matches
 
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX
-  mouseY = e.clientY
+if (!isTouch) {
+  gsap.set([cursor, follower], { opacity: 0 })
 
-  gsap.set([cursor, follower], { opacity: 1 })
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX
+    mouseY = e.clientY
 
-  gsap.to(cursor, {
-    x: mouseX,
-    y: mouseY,
-    duration: 0.1,
-    ease: "power2.out"
+    gsap.set([cursor, follower], { opacity: 1 })
+
+    gsap.to(cursor, {
+      x: mouseX,
+      y: mouseY,
+      duration: 0.1,
+      ease: "power2.out"
+    })
   })
-})
+}
 
 gsap.ticker.add(() => {
   followerX += (mouseX - followerX) * 0.15
@@ -335,8 +339,8 @@ document.querySelectorAll('[data-fade-text]').forEach(el => {
 // Maps current scroll velocity to a card reveal duration (fast scroll = shorter animation)
 const getCardDuration = () => {
   const maxDuration = 1.5
-  const minDuration = 0.25
-  const velocityThreshold = 800
+  const minDuration = 0.08
+  const velocityThreshold = 400
   const t = Math.min(1, scrollVelocity / velocityThreshold)
   return maxDuration - t * (maxDuration - minDuration)
 }
@@ -351,29 +355,31 @@ const animateCardGroup = (gridSelector, cardSelector, columns = 2) => {
 
     ScrollTrigger.create({
       trigger: card,
-      start: "top 85%",
+      start: "top 90%",
       onEnter: () => {
         const activeCols = window.innerWidth > 768 ? columns : 1;
         const colIndex = index % activeCols;
         const duration = getCardDuration()
-        const delay = colIndex * (0.15 * (duration / 1.5)) // scale stagger with duration
+        const isFast = duration < 0.3
+        const ease = isFast ? "power1.out" : "power3.inOut"
+        const delay = isFast ? 0 : colIndex * (0.15 * (duration / 1.5))
 
         gsap.timeline({ delay: delay })
           .fromTo(scanline,
             { top: "0%", opacity: 0 },
-            { top: "0%", opacity: 1, duration: 0.1 }
+            { top: "0%", opacity: 1, duration: isFast ? 0 : 0.1 }
           )
           .fromTo(card,
             { clipPath: "inset(0 0 100% 0)", opacity: 0 },
-            { clipPath: "inset(0 0 0% 0)", opacity: 1, duration: duration, ease: "power3.inOut" },
+            { clipPath: "inset(0 0 0% 0)", opacity: 1, duration: duration, ease: ease },
             "<"
           )
           .fromTo(scanline,
             { top: "0%" },
-            { top: "100%", duration: duration, ease: "power3.inOut" },
+            { top: "100%", duration: duration, ease: ease },
             "<"
           )
-          .to(scanline, { opacity: 0, duration: 0.2 })
+          .to(scanline, { opacity: 0, duration: isFast ? 0.05 : 0.2 })
       },
       once: true
     })

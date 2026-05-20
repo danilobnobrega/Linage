@@ -459,6 +459,34 @@ strong {
   color: var(--text-color-muted);
 }
 
+/* Social Proof Section */
+.social-proof {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.social-proof-content {
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.social-proof-body {
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+  line-height: 1.65;
+  color: var(--text-color-muted);
+}
+
+.social-proof-highlight {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: clamp(1.35rem, 2.8vw, 2rem);
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
 /* Pricing Section */
 .pricing-header {
   margin-bottom: 6rem;

@@ -270,40 +270,65 @@ renderThree()
 
 // --- GSAP Animations ---
 
-// Loader Sequence
-const tlLoader = gsap.timeline()
-tlLoader.to('.loader-text .char', {
-  y: 0,
-  opacity: 1,
-  stagger: 0.05,
-  duration: 1,
-  ease: "power4.out",
-  delay: 0.2
+// Loader Sequence — decrypt "LINAGE" then exit
+function decryptLoader(onComplete) {
+  const el = document.querySelector('.loader-text')
+  const originalText = 'LINAGE'
+  const luxuryGlyphs = "†‡§¶øæœX*•°AΘΞΦΨΩ".split("")
+  const letters = originalText.split("")
+  let frame = 0
+  const totalFrames = 30
+
+  // Replace content with invisible placeholders before fading in
+  el.innerHTML = letters.map(() => `<span style="opacity:0;">&nbsp;</span>`).join("")
+
+  gsap.to(el, { opacity: 1, duration: 0.3, ease: "power2.out", delay: 0.2 })
+
+  setTimeout(() => {
+    const interval = setInterval(() => {
+      el.innerHTML = letters.map((char, index) => {
+        const progress = frame / totalFrames
+        const charIndex = index / letters.length
+        if (progress > charIndex) {
+          return char
+        } else if (progress > charIndex - 0.2) {
+          const glyph = luxuryGlyphs[Math.floor(Math.random() * luxuryGlyphs.length)]
+          return `<span style="color: #a0a0a0; font-weight: 300;">${glyph}</span>`
+        } else {
+          return `<span style="opacity: 0;">&nbsp;</span>`
+        }
+      }).join("")
+
+      if (frame >= totalFrames) {
+        clearInterval(interval)
+        el.innerText = originalText
+        if (onComplete) onComplete()
+      }
+      frame++
+    }, 35)
+  }, 200)
+}
+
+decryptLoader(() => {
+  gsap.timeline({ delay: 0.5 })
+    .to('.loader', {
+      yPercent: -100,
+      duration: 1,
+      ease: "power4.inOut"
+    })
+    .from('.hero-title', {
+      y: 30,
+      opacity: 0,
+      duration: 1.2,
+      ease: "power4.out"
+    }, "-=0.5")
+    .from('.hero-cta', {
+      y: 40,
+      opacity: 0,
+      duration: 1.2,
+      ease: "power4.out"
+    }, "-=0.8")
 })
-.to('.loader-text .char', {
-  y: -100,
-  opacity: 0,
-  stagger: 0.05,
-  duration: 0.8,
-  ease: "power4.in"
-}, "+=0.5")
-.to('.loader', {
-  yPercent: -100,
-  duration: 1,
-  ease: "power4.inOut"
-})
-.from('.hero-title', {
-  y: 30,
-  opacity: 0,
-  duration: 1.2,
-  ease: "power4.out"
-}, "-=0.5")
-.from('.hero-cta', {
-  y: 40,
-  opacity: 0,
-  duration: 1.2,
-  ease: "power4.out"
-}, "-=0.8")
 
 
 // Scroll-Linked Text Decryption Trigger (Strategic Titles)

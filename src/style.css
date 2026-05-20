@@ -787,6 +787,10 @@ strong {
   .nav-btn-comecar {
     display: none;
   }
+
+  .hero-title p:first-child {
+    padding-left: 1.5rem;
+  }
 }
 
 /* Hide custom cursor on touch devices */
